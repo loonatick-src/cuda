@@ -165,3 +165,18 @@ int vecAdd(float* A, float *B, float *C, int n) {
     vecAddKernel<<<ceil(n/256.0), 256>>>(d_A, d_B, d_C, n);
 }
 \end{minted}
+
+The final code, \texttt{vecadd.cu} looks like so
+\begin{code}
+\inputminted[samepage=false, breaklines, linenos]{c}{../codes/vecadd.cu}
+\label{lst:vecaddfinal}
+\caption{Vector addition kernel function and kernel launch function}
+\end{code}
+
+Epic. Note that \texttt{nvcc} requires a \texttt{main()} function
+and you cannot compile to relocatables individually. Or so it would
+seem, I have not yet looked into all the flags etc that can be
+passed to \texttt{nvcc}.
+
+\subsection*{Exercises}
+TBD
