@@ -1,0 +1,9 @@
+*.aux
+*.swp
+*.fls
+*.log
+*.synctex.gz
+*minted-main/
+*.fdb_latexmk
+*.out
+
