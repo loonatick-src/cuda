@@ -7,3 +7,5 @@
 *.fdb_latexmk
 *.out
 *UltiSnips/
+*.txt
+*input
