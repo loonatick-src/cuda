@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include "matrixIO.h"
+
 void printMat(float *a, int n) {
     int i, j;
     for (i = 0; i < n; i ++) {
