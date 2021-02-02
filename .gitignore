@@ -6,6 +6,7 @@
 *minted-main/
 *.fdb_latexmk
 *.out
+*.dat
 *UltiSnips/
 *.txt
 *input
