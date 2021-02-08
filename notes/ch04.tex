@@ -87,3 +87,22 @@ location in the program. I see potential deadlocks.
 At the very least using this particular barrier synchronization
 would allow different blocks to execute independent of each other.
 
+\subsection*{Thread Scheduling and Latency Tolerance}
+Thread scheduling depend on specific hardware implementations, A warp
+is a unit of thread scheduling, typically 32 threads, but is not
+defined in the CUDA specification. A streaming multiprocessor
+executes all threads in a WARP in a SIMD fashion - all threads in a
+warp will have the same execution timing.
+
+In general, there are fewer streaming processors (SP) per SM than
+the number of threads assigned to each SM; a scheduler is involved
+in the execution of all the warps assigned to an SM. By having
+more warps per SM than what the underlying hardware can execute at
+a time, CUDA processors efficiently execute long latency operations
+such as global memory accesses - context switching. Another resident
+warp that is not scheduled is then scheduled and the previously
+scheduled warp, that is waiting for the completion of a long latency
+operation is queued.
+
+Examples of long latency operations include pipelined FP arithmetic,
+branch instructions etc. \textit{Note that warp scheduling has zero-overhead when switching to another ready warp.}

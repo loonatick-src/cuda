@@ -1,0 +1,51 @@
+\section*{CUDA Memories}
+The previous implementations that use only global memory accesses
+to move and access data achieve only a fraction of the potential
+of the GPU. DRAMs typcically have access latencies in some hundreds
+of clock cycles and finite access bandwidth. So, scheduling can
+hide global memory access latency only up to a certain point.
+
+Consider for example the matrix multiplication kernel. The workhorse
+of the kernel was the \texttt{for} loop
+\begin{minted}{c}
+for (int k = 0; k < width; k++)
+    Pvalue += d_M[row*width + k]*d_N[k*width + col]
+\end{minted}
+There are two global memory accesses per iteration of the loop along
+with two floating point addtions. Compute:Global-memory-access ratio
+(CGMA) is 1:1.
+
+For a memory bandwidth of 200 GB/s, we can fetch $200 / 4 = 50$ floats
+per second, and consequently perform at 50 GFLOPS. But, the peak
+performance of cards with such specs is around 1500 GFLOPS. Yikes.
+We need a CGMA of 30 to get there, with modern GPUs demanding even
+higher CGMA for reaching full potential.
+
+\subsection*{CUDA device memory types}
+\begin{itemize}
+    \item Registers (on-chip, allocated to individual threads)
+    \item Shared Memory (on-chip, allocated to individual blocks)
+    \item Texture/Constant/Read-only memory
+    \item \ldots (newer architectures)
+\end{itemize}
+
+\begin{itemize}
+    \item Device code can
+        \begin{itemize}
+            \item R/W per-thread registers
+            \item R/W per-thread local memory
+            \item R/W per-block shared memory
+            \item R/W per-grid global memory
+            \item Read per-grid constant memory
+        \end{itemize}
+    \item Host code can
+        \begin{itemize}
+            \item Transfer data to/from per grid global and constant
+                memories.
+        \end{itemize}
+\end{itemize}
+
+The global memory is analogous to the memory in the von Neumann model,
+ i.e. implemented off the chip. The registers are analogous to the 
+ register files in the von Neumann architecture. These have
+ drastically shorter latencies and higher agregate access bandwidth.
