@@ -50,4 +50,16 @@ The global memory is analogous to the memory in the von Neumann model,
  register files in the von Neumann architecture. These have
  drastically shorter latencies and higher agregate access bandwidth.
 
- Mutual funds are subject to market risks
+\subsection*{Shared Memory}
+Allocated using the \texttt{\_\_shared\_\_} memory space identifier.
+It is typically used as a scratchpad memory (or software managed
+cache) to minimize global memory accesses from a CUDA block.
+
+The global memory implementation of a matrix multiplication kernel
+has a CGMA of $1.0$. A shared memory implementation of matrix
+multiplication is going to be much faster. it is also called
+\textit{tiled matrix multiplication} as the input and output
+matrices are partitioned like tiles on a floor and allocated to
+different blocks, with each block having its own shared memory.
+
+Using shared memory is one strategy to reduce global memory traffic.
