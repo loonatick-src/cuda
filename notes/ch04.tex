@@ -143,6 +143,14 @@ into a single thread (analogous to \texttt{MPI\_Reduce}).
 \end{minted}
 
 The above code performs a tree-reduction to compute the sum of
-the \texttt{val} variable held by each thread in a warp.
+the \texttt{val} variable held by each thread in a warp. See figure
+\ref{fig:figures-shfldown-png}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/shfldown.png}
+    \caption{Warp-level parallel reduction (taken from NVIDIA's blog)}
+    \label{fig:figures-shfldown-png}
+\end{figure}
 
 (TODO: document some warp-level primitives)
