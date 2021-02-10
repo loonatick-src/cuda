@@ -106,3 +106,43 @@ operation is queued.
 
 Examples of long latency operations include pipelined FP arithmetic,
 branch instructions etc. \textit{Note that warp scheduling has zero-overhead when switching to another ready warp.}
+
+\subsection*{SIMT and Warp-Level Primitives}
+I came across a nice blog post by NVIDIA on warp-level primitives.
+The question that I had been trying to address was ``is it safe to
+remove \texttt{\_\_syncthreads()} when the block size is the same as
+the device warp size?". The answer is no. There can be divergent
+control flow between threads in the same warp. The simplest
+example is when checking boundary conditions when working with
+tensors/tensor-like data structures.
+
+While GPU computing is usually defined as SIMD (Single Instruction
+Multiple Thread), the classification SIMD in the context of Flynn's
+taxonomy is usually reserved for vector architecture, i.e. a
+scalar thread issues vector instructions, and the exact same
+instruction is applied across many data elements.
+
+SIMT (Single Instruction Multiple Thread) is a more appropriate
+classification for GPUs, even at the level of a single warp. Each
+thread has access to its own registers and can load and store from
+divergent addresses and follow different control paths.
+
+It is possible to achieve even higher performance by using warp-level
+primitives and exploiting the flexibility provided by this SIMT
+architecture.
+
+A consequence of this is that we can have cooperative groups
+collectives, e.g. accumulating the sum of values in all threads
+into a single thread (analogous to \texttt{MPI\_Reduce}).
+
+\begin{minted}
+    {c}
+    #define FULL_MASK 0xffffffff
+    for (int offset = 0x10; offset > 0; offset /= 2)
+        val += __shfl_down_sync(FULL_MASK, val, offset); 
+\end{minted}
+
+The above code performs a tree-reduction to compute the sum of
+the \texttt{val} variable held by each thread in a warp.
+
+(TODO: document some warp-level primitives)
