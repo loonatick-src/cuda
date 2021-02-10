@@ -27,9 +27,15 @@ int main() {
 #endif
 
 #ifndef TESTIO
-    D = (float *) malloc(sz*sizeof(float));
+    float *D = (float *) malloc(sz*sizeof(float));
     matrixMulSquare(A, B, D, n);
     printMat(D, n);
+#endif
+
+#ifdef ROWW
+    float *C = (float *) malloc(sz*sizeof(float));
+    matrixAdd_roww(A, B, C, n);
+    printMat(C, n);
 #endif
 
     return 0;

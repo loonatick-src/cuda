@@ -37,3 +37,35 @@ void matrixMulSquare(float *M, float *N, float *P, int width) {
     cudaMemcpy(P, d_P, sz, cudaMemcpyDeviceToHost);
     cudaFree(d_M); cudaFree(d_N); cudaFree(d_P);
 }
+
+void matrix_vectorMulKernel(float *A, float *v, float *p, int n) {
+    int index = blockDim.x * blockIdx.x + threadIdx.x;
+    if (index < n) {
+        p[index] = 0.0;
+        for (int i = 0; i < n; i++) {
+            int matindex = n*index + i;
+            p[index] += A[matindex]*v[i]; 
+        }
+    }
+}
+
+void matrix_vectorMul(float *A, float *v, float *p, int n) {
+    const int threadsPerBlock = 16;
+    const int numBlocks = n/threadsPerBlock + 1;
+    int size = n*n;
+
+    float *d_A, *d_v, *d_p;
+
+    cudaMalloc((void **) &d_A, size);
+    cudaMalloc((void **) &d_v, n);
+    cudaMalloc((void **) &d_p, n);
+
+    cudaMemcpy(d_A, A, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_v, v, n, cudaMemcpyHostToDevice);
+
+    matrix_vectorMulKernel<<<numBlocks, threadsPerBlock>>>(
+            d_A, d_v, d_p, n);
+
+    cudaMemcpy(p, d_p, n, cudaMemcpyDeviceToHost);
+    cudaFree(d_A); cudaFree(d_v); cudaFree(d_p);
+}
